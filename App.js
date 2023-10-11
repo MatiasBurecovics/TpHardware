@@ -1,13 +1,15 @@
-import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
-import Script from './scrpit'
+import WeatherComponent from './WeatherComponent';
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Script></Script>
-      <StatusBar style="auto" />
-    </View>
+    <div className="App">
+    <header className="App-header">
+      <h1>Aplicación del Clima</h1>
+    </header>
+    <WeatherComponent />
+ 
+  </div>
   );
 }
 
