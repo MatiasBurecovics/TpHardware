@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { View, Text, Image } from 'react-native';
 
 function WeatherComponent() {
     const [data, setData] = useState(null);
@@ -21,42 +22,48 @@ function WeatherComponent() {
                     .catch(error => {
                         console.error(error);
                         setIsLoading(false);
+
                     });
             });
         }
     }, []);
 
-    if (isLoading) return <div>Cargando...</div>;
-
     const getWeatherIcon = main => {
         switch (main) {
-            case 'Thunderstorm': return 'animated/thunder.svg';
-            case 'Drizzle': return 'animated/rainy-2.svg';
-            case 'Rain': return 'animated/rainy-7.svg';
-            case 'Snow': return 'animated/snowy-6.svg';
-            case 'Clear': return 'animated/day.svg';
-            case 'Atmosphere': return 'animated/weather.svg';
-            case 'Clouds': return 'animated/cloudy-day-1.svg';
-            default: return 'animated/cloudy-day-1.svg';
+            case 'Thunderstorm': return require('./animated/thunder.svg');
+            case 'Drizzle': return require('./animated/rainy-2.svg');
+            case 'Rain': return require('./animated/rainy-7.svg');
+            case 'Snow': return require('./animated/snowy-6.svg');
+            case 'Clear': return require('./animated/day.svg');
+            case 'Atmosphere': return require('./animated/weather.svg');
+            case 'Clouds': return require('./animated/cloudy-day-1.svg');
+            default: return require('./animated/cloudy-day-1.svg');
         }
     }
 
     return (
-        <div id="contenedor">
-            <div id="caja1">
-                <h1>{Math.round(data.main.temp)} ° C</h1>
-                <h1>{data.weather[0].description.toUpperCase()}</h1>
-            </div>
-            <div id="caja2">
-                <h2>{data.name}</h2>
-                <img id="icono-animado" src={getWeatherIcon(data.weather[0].main)} alt="Icono del Clima" height="128" width="128" />
-            </div>
-            <div id="caja3">
-                <h3>Veloc. del Viento</h3>
-                <h1>{data.wind.speed} m/s</h1>
-            </div>
-        </div>
+        <>
+        {
+            isLoading ? (<View><Text>Cargando...</Text></View>):
+(
+        <View id="contenedor">
+            <View id="caja1">
+                <Text>{Math.round(data.main.temp)} ° C</Text>
+                <Text>{data.weather[0].description.toUpperCase()}</Text>
+            </View>
+            <View id="caja2">
+                <Text>{data.name}</Text>
+                <Image source={getWeatherIcon(data.weather[0].main)} style={{ height: 128, width: 128 }} />
+            </View>
+            <View id="caja3">
+                <Text>Velocidad del Viento</Text>
+                <Text>{data.wind.speed} m/s</Text>
+            </View>
+        </View>
+    )}
+    </>
     );
+        
 }
 
 export default WeatherComponent;
