@@ -1,26 +1,13 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
 import WeatherComponent from './WeatherComponent';
 import BackgroundImage from './BackgroundImage';
 
 export default function App() {
-  const [showWeather, setShowWeather] = useState(true);
-
-  const toggleComponent = () => {
-    setShowWeather(!showWeather);
-  };
-
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Elegi la funcion</Text>
-      </View>
-      {showWeather ? <WeatherComponent /> : <BackgroundImage />}
-      <TouchableOpacity style={styles.toggleButton} onPress={toggleComponent}>
-        <Text style={styles.buttonText}>
-          {showWeather ? 'Ver Fondo de Pantalla' : 'Ver Clima'}
-        </Text>
-      </TouchableOpacity>
+      <BackgroundImage />
+      <WeatherComponent />
     </View>
   );
 }
