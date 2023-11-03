@@ -1,80 +1,94 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput,StyleSheet, Button} from 'react-native';
-import { storeData } from './localStorage'
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, StyleSheet, Button } from 'react-native';
+import { storeData, getData } from './localStorage';
 
-function NroEmergencia () {
+const NroEmergencia = () => {
+  const [number, setNumber] = useState('');
+  const [error, setError] = useState(false);
 
-  const [number, setNumber] = useState("");
-  const [error, setError] = useState(false)
+  useEffect(() => {
+    async function loadEmergencyNumber() {
+      const storedNumber = await getData('emergencyNumber');
+      if (storedNumber) {
+        setNumber(storedNumber);
+      }
+    }
+    loadEmergencyNumber();
+  }, []);
 
   const saveNumber = async () => {
-    setNumber(number);
-    storeData("emergencyNumber", number)
-  }
+    storeData('emergencyNumber', number);
+  };
 
   return (
-
     <View style={styles.container}>
-        <Text style={styles.title}>Configuración de número de emergencia</Text>
-        <Text style={styles.text}>Tu número de emergencia es:</Text>
-        <Text style={styles.text}>+54911{number}</Text>
-        <TextInput onChangeText={text => setNumber(text)} value={number} keyboardType = 'numeric' placeholder="Numero de emergencia" style={styles.input}></TextInput>
-        {error && <Text style={styles.errorText}>La cantidad de dígitos tiene que ser 8</Text>}
+      <Text style={styles.title}>Configuración de número de emergencia</Text>
+      <Text style={styles.text}>Tu número de emergencia es:</Text>
+      <Text style={styles.emergencyNumber}>+54911{number}</Text>
+      <TextInput
+        onChangeText={(text) => setNumber(text)}
+        value={number}
+        keyboardType="numeric"
+        placeholder="Número de emergencia"
+        style={styles.input}
+      />
+      {error && (
+        <Text style={styles.errorText}>
+          La cantidad de dígitos debe ser 8
+        </Text>
+      )}
 
-        <Button
-          title="CONFIRMAR"
-          color="black"
-          onPress={ () => {
+      <Button
+        title="CONFIRMAR"
+        color="#E7A64F" 
+        onPress={() => {
+          if (number.length !== 8) {
+            setError(true);
+          } else {
+            setError(false);
+            saveNumber();
+          }
+        }}
+      />
+    </View>
+  );
+};
 
-             if (number.length < 8 || number.length > 8){
-              setError(true)
-             
-            }
-            else {
-                setError(false)
-                saveNumber()
-            }    
-          }} 
-        />
-    </View> 
-
-  ); 
-}
 const styles = StyleSheet.create({
-    container: {
-        backgroundColor: "lightgray",
-        justifyContent: "center",
-        alignItems: "center"
-    },
-    title: {
-        fontSize: 20,
-        fontWeight: "500",
-        marginTop: 50,
-        marginBottom: 20
-    },
-    input: {
-        fontSize: 16,
-        width: '80%',
-        alignItems: 'center',
-        borderWidth: 2,
-        padding: 8,
-        marginVertical: 20,
-        backgroundColor: '#F4F4F4',
-        justifyContent: "center"
-      },
-    text: {
-        justifyContent: "center",
-        alignItems: "center",
-        fontSize: 16,
-        fontWeight: "300",
-      },
-    errorText: {
-        justifyContent: "center",
-        alignItems: "center",
-        fontSize: 16,
-        fontWeight: "300",
-        marginBottom: 20
-    }
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#3679A2', 
+  },
+  title: {
+    fontSize: 24,
+    color: 'white',
+    marginBottom: 20,
+  },
+  text: {
+    fontSize: 18,
+    color: 'white',
+  },
+  emergencyNumber: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#E7A64F', 
+  },
+  input: {
+    width: 200,
+    height: 40,
+    borderWidth: 1,
+    borderColor: 'white',
+    backgroundColor: 'white',
+    borderRadius: 5,
+    marginTop: 10,
+    paddingHorizontal: 10,
+  },
+  errorText: {
+    color: 'red',
+    marginTop: 10,
+  },
 });
 
-export default NroEmergencia
+export default NroEmergencia;

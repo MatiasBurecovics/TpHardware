@@ -1,7 +1,8 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Alert, ImageBackground } from 'react-native';
 import { Camera } from 'expo-camera';
-import { CameraRoll } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Importa AsyncStorage
 
 export default function BackgroundImage() {
   const [startCamera, setStartCamera] = useState(false);
@@ -9,8 +10,18 @@ export default function BackgroundImage() {
   const [capturedImage, setCapturedImage] = useState(null);
   const [cameraType, setCameraType] = useState(Camera.Constants.Type.back);
   const [flashMode, setFlashMode] = useState('off');
+  const [backgroundImage, setBackgroundImage] = useState(null);
 
   const cameraRef = useRef(null);
+
+  useEffect(() => {
+    AsyncStorage.getItem('backgroundImage')
+      .then((value) => {
+        if (value) {
+          setBackgroundImage(value);
+        }
+      });
+  }, []);
 
   const sCamera = async () => {
     const { status } = await Camera.requestPermissionsAsync();
@@ -30,19 +41,6 @@ export default function BackgroundImage() {
       setCapturedImage(photo);
     }
   }
-
-  const savePhoto = async () => {
-    if (capturedImage) {
-      const { uri } = capturedImage;
-      try {
-        await CameraRoll.saveToCameraRoll(uri, 'photo');
-        Alert.alert('Photo saved to gallery');
-      } catch (error) {
-        console.error('Error saving photo:', error);
-        Alert.alert('Failed to save photo. Please try again.');
-      }
-    }
-  };
 
   const retakePicture = () => {
     setCapturedImage(null);
@@ -67,12 +65,26 @@ export default function BackgroundImage() {
     );
   }
 
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+  
+    if (!result.cancelled && result.uri) {
+      await AsyncStorage.setItem('backgroundImage', result.uri);
+      setBackgroundImage(result.uri);
+    }
+  };
+  
   return (
     <View style={styles.container}>
       {startCamera ? (
         <View style={{ flex: 1, width: '100%' }}>
           {previewVisible && capturedImage ? (
-            <CameraPreview photo={capturedImage} savePhoto={savePhoto} retakePicture={retakePicture} />
+            <CameraPreview photo={capturedImage} retakePicture={retakePicture} />
           ) : (
             <Camera
               type={cameraType}
@@ -108,13 +120,18 @@ export default function BackgroundImage() {
           )}
         </View>
       ) : (
-        <View style={{ flex: 1, backgroundColor: '#fff', justifyContent: 'center', alignItems: 'center' }}>
-          <TouchableOpacity
-            onPress={sCamera}
-            style={{ width: 130, borderRadius: 4, backgroundColor: '#14274e', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', height: 40 }}
+        <View style={{ flex: 1 }}>
+          <ImageBackground
+            source={{ uri: backgroundImage }}
+            style={{ flex: 1 }}
           >
-            <Text style={{ color: '#fff', fontWeight: 'bold', textAlign: 'center' }}>Take picture</Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              onPress={pickImage}
+              style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+            >
+              <Text style={{ color: '#fff', fontWeight: 'bold', textAlign: 'center' }}>Select background image</Text>
+            </TouchableOpacity>
+          </ImageBackground>
         </View>
       )}
     </View>
@@ -124,16 +141,12 @@ export default function BackgroundImage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });
 
-const CameraPreview = ({ photo, retakePicture, savePhoto }) => {
-  console.log('sdsfds', photo);
+const CameraPreview = ({ photo, retakePicture }) => {
   return (
-    <View style={{ backgroundColor: 'transparent', flex: 1, width: '100%', height: '100%' }}>
+    <View style={{ flex: 1 }}>
       <ImageBackground source={{ uri: photo && photo.uri }} style={{ flex: 1 }}>
         <View style={{ flex: 1, flexDirection: 'column', padding: 15, justifyContent: 'flex-end' }}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -142,12 +155,6 @@ const CameraPreview = ({ photo, retakePicture, savePhoto }) => {
               style={{ width: 130, height: 40, alignItems: 'center', borderRadius: 4 }}
             >
               <Text style={{ color: '#fff', fontSize: 20 }}>Re-take</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={savePhoto}
-              style={{ width: 130, height: 40, alignItems: 'center', borderRadius: 4 }}
-            >
-              <Text style={{ color: '#fff', fontSize: 20 }}>Save photo</Text>
             </TouchableOpacity>
           </View>
         </View>
