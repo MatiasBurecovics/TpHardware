@@ -4,6 +4,7 @@ import { View, Text, Image, StyleSheet, ImageBackground } from 'react-native';
 function WeatherComponent({ backgroundImage }) {
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -24,6 +25,14 @@ function WeatherComponent({ backgroundImage }) {
             setIsLoading(false);
           });
       });
+
+      const intervalId = setInterval(() => {
+        setCurrentTime(new Date().toLocaleTimeString());
+      }, 1000);
+
+      return () => {
+        clearInterval(intervalId);
+      };
     }
   }, []);
 
@@ -74,6 +83,7 @@ function WeatherComponent({ backgroundImage }) {
             </View>
           </View>
         )}
+        <Text style={styles.currentTime}>{currentTime}</Text>
       </View>
     </ImageBackground>
   );
@@ -134,6 +144,11 @@ const styles = StyleSheet.create({
   windSpeed: {
     fontSize: 18,
     color: 'black',
+  },
+  currentTime: {
+    fontSize: 18,
+    color: 'black',
+    marginTop: 10,
   },
 });
 
