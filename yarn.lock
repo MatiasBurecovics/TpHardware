@@ -4597,7 +4597,7 @@ expo-image-loader@~4.4.0:
 
 expo-image-picker@^14.5.0:
   version "14.5.0"
-  resolved "https://registry.npmjs.org/expo-image-picker/-/expo-image-picker-14.5.0.tgz"
+  resolved "https://registry.yarnpkg.com/expo-image-picker/-/expo-image-picker-14.5.0.tgz#fdc14c74ad338a6a630f8fc5c81e642d6bea343c"
   integrity sha512-9icvfQuWMdNKufFqu+FxenKcfybz9ior+XYQCIl/q5+mpHPo2tKq8I30vu2BjsOJ0Cfo7V4vMeN7a9F/3ooUfQ==
   dependencies:
     expo-image-loader "~4.4.0"
@@ -7987,6 +7987,11 @@ react-native-screens@^3.27.0:
   dependencies:
     react-freeze "^1.0.0"
     warn-once "^0.1.0"
+
+react-native-wallpaper-manager@^0.3.16:
+  version "0.3.16"
+  resolved "https://registry.yarnpkg.com/react-native-wallpaper-manager/-/react-native-wallpaper-manager-0.3.16.tgz#b6985b03c6df2efbcc2071db5977ab6eb932b596"
+  integrity sha512-dmDg4c4bcJR4OLwR8Zd5N17xx7t3yq0h3a2b5huN+nnhm1lUwSgqmX4ZdGs8h8KZni8MKdY9/ujf7gl0yk8DPg==
 
 react-native-web@^0.19.9:
   version "0.19.9"
