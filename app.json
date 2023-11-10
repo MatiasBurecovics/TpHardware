@@ -19,6 +19,19 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
+      },
+      "permissions": {
+        "camera": {
+          "settings": {
+            "android": {
+              "fullScreen": true
+            }
+          }
+        },
+        "mediaLibrary": {
+          "read": true,
+          "write": true
+        }
       }
     },
     "web": {

@@ -1,10 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, Button } from 'react-native';
 import { storeData, getData } from './localStorage';
+import { ImageBackground} from 'react-native';
 
 const NroEmergencia = () => {
   const [number, setNumber] = useState('');
   const [error, setError] = useState(false);
+  const [image, setImage] = useState(null);
+
+  const retrieveData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('image');
+      if (value !== null) {
+        setImage(value)
+        console.log(value);
+      }
+    } catch (error) {
+    }
+  };
+
+  useEffect(() => {
+    retrieveData() 
+  }, []);
+
 
   useEffect(() => {
     async function loadEmergencyNumber() {
@@ -22,36 +40,70 @@ const NroEmergencia = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Configuración de número de emergencia</Text>
-      <Text style={styles.text}>Tu número de emergencia es:</Text>
-      <Text style={styles.emergencyNumber}>+54911{number}</Text>
-      <TextInput
-        onChangeText={(text) => setNumber(text)}
-        value={number}
-        keyboardType="numeric"
-        placeholder="Número de emergencia"
-        style={styles.input}
-      />
-      {error && (
-        <Text style={styles.errorText}>
-          La cantidad de dígitos debe ser 8
-        </Text>
+      {image ? (
+        <ImageBackground source={{ uri: image }} style={styles.imageBackground}>
+          <Text style={styles.title}>Configuración de número de emergencia</Text>
+          <Text style={styles.text}>Tu número de emergencia es:</Text>
+          <Text style={styles.emergencyNumber}>+54911{number}</Text>
+          <TextInput
+            onChangeText={(text) => setNumber(text)}
+            value={number}
+            keyboardType="numeric"
+            placeholder="Número de emergencia"
+            style={styles.input}
+          />
+          {error && (
+            <Text style={styles.errorText}>
+              La cantidad de dígitos debe ser 8
+            </Text>
+          )}
+          <Button
+            title="CONFIRMAR"
+            color="#E7A64F"
+            onPress={() => {
+              if (number.length !== 8) {
+                setError(true);
+              } else {
+                setError(false);
+                saveNumber();
+              }
+            }}
+          />
+        </ImageBackground>
+      ) : (
+        <View>
+          <Text style={styles.title}>Configuración de número de emergencia</Text>
+          <Text style={styles.text}>Tu número de emergencia es:</Text>
+          <Text style={styles.emergencyNumber}>+54911{number}</Text>
+          <TextInput
+            onChangeText={(text) => setNumber(text)}
+            value={number}
+            keyboardType="numeric"
+            placeholder="Número de emergencia"
+            style={styles.input}
+          />
+          {error && (
+            <Text style={styles.errorText}>
+              La cantidad de dígitos debe ser 8
+            </Text>
+          )}
+          <Button
+            title="CONFIRMAR"
+            color="#E7A64F"
+            onPress={() => {
+              if (number.length !== 8) {
+                setError(true);
+              } else {
+                setError(false);
+                saveNumber();
+              }
+            }}
+          />
+        </View>
       )}
-
-      <Button
-        title="CONFIRMAR"
-        color="#E7A64F" 
-        onPress={() => {
-          if (number.length !== 8) {
-            setError(true);
-          } else {
-            setError(false);
-            saveNumber();
-          }
-        }}
-      />
     </View>
   );
+  
 };
 
 const styles = StyleSheet.create({
