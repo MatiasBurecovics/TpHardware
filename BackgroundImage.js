@@ -4,8 +4,8 @@ import * as ImagePicker from 'expo-image-picker';
 import * as MediaLibrary from 'expo-media-library';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const BackgroundImage = () => {
-  const [image, setImage] = useState(null);
+const BackgroundImage = ({ onImageChange }) => {
+  const [image, setImage] = useState('');
 
   useEffect(() => {
     requestPermission();
@@ -23,33 +23,24 @@ const BackgroundImage = () => {
     }
   };
 
-  const loadSavedImage = async (image) => {
+  const loadSavedImage = async () => {
     try {
-      await AsyncStorage.setItem("image", image);
-      console.log(image)
-    } catch (error) {
-    }
-  };
-
-  const retrieveData = async () => {
-    try {
-      const value = await AsyncStorage.getItem('image');
-      if (value !== null) {
-        setImage(value)
-        console.log(value);
+      const savedImage = await AsyncStorage.getItem('savedImage');
+      if (savedImage) {
+        setImage(savedImage);
       }
     } catch (error) {
+      console.log('Error al cargar la imagen almacenada: ' + error);
     }
   };
 
-  useEffect(() => {
-    retrieveData() 
-  }, []);
-
-  useEffect(()=>{
-    loadSavedImage(image)
-  },[image]);
-
+  const saveImageToStorage = async (uri) => {
+    try {
+      await AsyncStorage.setItem('savedImage', uri);
+    } catch (error) {
+      console.log('Error al guardar la imagen en el almacenamiento: ' + error);
+    }
+  };
 
   const selectImage = async () => {
     const options = {
@@ -94,10 +85,11 @@ const BackgroundImage = () => {
 
   const saveImageToLibrary = async (uri) => {
     try {
-      await saveImageToStorage(uri); 
+      await saveImageToStorage(uri);
       const asset = await MediaLibrary.createAssetAsync(uri);
       await MediaLibrary.createAlbumAsync('MyImages', asset, false);
       console.log('Imagen guardada en la galería.');
+      onImageChange(uri);
     } catch (error) {
       console.log('Error al guardar la imagen: ' + error);
     }

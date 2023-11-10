@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, Image, StyleSheet, ImageBackground } from 'react-native';
 
-function WeatherComponent() {
+function WeatherComponent({ backgroundImage }) {
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -49,37 +49,47 @@ function WeatherComponent() {
   };
 
   return (
-    <View style={styles.container}>
-      {isLoading ? (
-        <View style={styles.loadingContainer}>
-          <Text style={styles.loadingText}>Cargando...</Text>
-        </View>
-      ) : (
-        <View style={styles.weatherContainer}>
-          <View style={styles.box1}>
-            <Text style={styles.temperature}>{Math.round(data.main.temp)} ° C</Text>
-            <Text style={styles.description}>{data.weather[0].description.toUpperCase()}</Text>
+    <ImageBackground
+      source={{ uri: backgroundImage }}
+      style={styles.backgroundImageContainer}
+    >
+      <View style={styles.container}>
+        {isLoading ? (
+          <View style={styles.loadingContainer}>
+            <Text style={styles.loadingText}>Cargando...</Text>
           </View>
-          <View style={styles.box2}>
-            <Text style={styles.location}>{data.name}</Text>
-            <Image source={getWeatherIcon(data.weather[0].main)} style={styles.weatherIcon} />
+        ) : (
+          <View style={styles.weatherContainer}>
+            <View style={styles.box1}>
+              <Text style={styles.temperature}>{Math.round(data.main.temp)} ° C</Text>
+              <Text style={styles.description}>{data.weather[0].description.toUpperCase()}</Text>
+            </View>
+            <View style={styles.box2}>
+              <Text style={styles.location}>{data.name}</Text>
+              <Image source={getWeatherIcon(data.weather[0].main)} style={styles.weatherIcon} />
+            </View>
+            <View style={styles.box3}>
+              <Text style={styles.wind}>Velocidad del Viento</Text>
+              <Text style={styles.windSpeed}>{data.wind.speed} m/s</Text>
+            </View>
           </View>
-          <View style={styles.box3}>
-            <Text style={styles.wind}>Velocidad del Viento</Text>
-            <Text style={styles.windSpeed}>{data.wind.speed} m/s</Text>
-          </View>
-        </View>
-      )}
-    </View>
+        )}
+      </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
+  backgroundImageContainer: {
+    flex: 1,
+    resizeMode: 'cover',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#3679A2', 
   },
   loadingContainer: {
     alignItems: 'center',
@@ -97,18 +107,18 @@ const styles = StyleSheet.create({
   },
   temperature: {
     fontSize: 36,
-    color: 'white',
+    color: 'black',
   },
   description: {
     fontSize: 18,
-    color: 'white',
+    color: 'black',
   },
   box2: {
     alignItems: 'center',
   },
   location: {
     fontSize: 24,
-    color: 'white',
+    color: 'black',
   },
   weatherIcon: {
     height: 128,
@@ -119,11 +129,11 @@ const styles = StyleSheet.create({
   },
   wind: {
     fontSize: 18,
-    color: 'white',
+    color: 'black',
   },
   windSpeed: {
     fontSize: 18,
-    color: 'white',
+    color: 'black',
   },
 });
 

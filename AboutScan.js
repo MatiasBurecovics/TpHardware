@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { Text, View, StyleSheet, Image, TouchableOpacity, ImageBackground } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 
-const AboutScan = () => {
+const AboutScan = ({ backgroundImage }) => {
   const [permission, setPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [isScanning, setIsScanning] = useState(false);
@@ -35,35 +35,45 @@ const AboutScan = () => {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Sobre nosotros</Text>
-      <Image source={require('./assets/qr.png')} style={styles.qrcode} />
-      <TouchableOpacity
-        onPress={startScanning}
-        style={[styles.scanButton, isScanning ? { backgroundColor: '#E7A64F' } : null]}
-      >
-        <Text style={{ color: 'blue', fontSize: 20 }}>Escanear QR</Text>
-      </TouchableOpacity>
-      {isScanning && (
-        <BarCodeScanner
-          onBarCodeScanned={handleBarCodeScanned}
-          style={StyleSheet.absoluteFillObject}
-        />
-      )}
-    </View>
+    <ImageBackground
+      source={{ uri: backgroundImage }}
+      style={styles.backgroundImageContainer}
+    >
+      <View style={styles.container}>
+        <Text style={styles.title}>Sobre nosotros</Text>
+        <Image source={require('./assets/qr.png')} style={styles.qrcode} />
+        <TouchableOpacity
+          onPress={startScanning}
+          style={[styles.scanButton, isScanning ? { backgroundColor: '#E7A64F' } : null]}
+        >
+          <Text style={styles.qrdis}>Escanear QR</Text>
+        </TouchableOpacity>
+        {isScanning && (
+          <BarCodeScanner
+            onBarCodeScanned={handleBarCodeScanned}
+            style={StyleSheet.absoluteFillObject}
+          />
+        )}
+      </View>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
+  backgroundImageContainer: {
+    flex: 1,
+    resizeMode: 'cover',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   container: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#3679A2', 
   },
   title: {
     fontSize: 24,
-    color: 'white',
+    color: 'black',
     marginBottom: 20,
   },
   qrcode: {
@@ -83,6 +93,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: 'red',
   },
+  qrdis:
+  {
+    color: 'black', 
+    fontSize: 20 
+  }
 });
 
 export default AboutScan;

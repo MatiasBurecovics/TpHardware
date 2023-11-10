@@ -1,28 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, StyleSheet, Button } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Button, ImageBackground } from 'react-native';
 import { storeData, getData } from './localStorage';
-import { ImageBackground} from 'react-native';
 
-const NroEmergencia = () => {
+const NroEmergencia = ({ backgroundImage }) => {
   const [number, setNumber] = useState('');
   const [error, setError] = useState(false);
-  const [image, setImage] = useState(null);
-
-  const retrieveData = async () => {
-    try {
-      const value = await AsyncStorage.getItem('image');
-      if (value !== null) {
-        setImage(value)
-        console.log(value);
-      }
-    } catch (error) {
-    }
-  };
-
-  useEffect(() => {
-    retrieveData() 
-  }, []);
-
 
   useEffect(() => {
     async function loadEmergencyNumber() {
@@ -40,8 +22,8 @@ const NroEmergencia = () => {
 
   return (
     <View style={styles.container}>
-      {image ? (
-        <ImageBackground source={{ uri: image }} style={styles.imageBackground}>
+      {backgroundImage ? (
+        <ImageBackground source={{ uri: backgroundImage }} style={styles.backgroundImage}>
           <Text style={styles.title}>Configuración de número de emergencia</Text>
           <Text style={styles.text}>Tu número de emergencia es:</Text>
           <Text style={styles.emergencyNumber}>+54911{number}</Text>
@@ -71,7 +53,7 @@ const NroEmergencia = () => {
           />
         </ImageBackground>
       ) : (
-        <View>
+        <View style={styles.blueBackground}>
           <Text style={styles.title}>Configuración de número de emergencia</Text>
           <Text style={styles.text}>Tu número de emergencia es:</Text>
           <Text style={styles.emergencyNumber}>+54911{number}</Text>
@@ -103,7 +85,6 @@ const NroEmergencia = () => {
       )}
     </View>
   );
-  
 };
 
 const styles = StyleSheet.create({
@@ -111,7 +92,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#3679A2', 
   },
   title: {
     fontSize: 24,
@@ -125,7 +105,7 @@ const styles = StyleSheet.create({
   emergencyNumber: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#E7A64F', 
+    color: '#E7A64F',
   },
   input: {
     width: 200,
@@ -140,6 +120,18 @@ const styles = StyleSheet.create({
   errorText: {
     color: 'red',
     marginTop: 10,
+  },
+  backgroundImage: {
+    flex: 1,
+    resizeMode: 'cover',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  blueBackground: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'blue',
   },
 });
 
